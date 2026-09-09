@@ -1,0 +1,48 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Technician App</title>
+    <style>
+      /* Add your CSS fixes here */
+      html, body, #root {
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+
+      div[style*="flex: 1"] {
+        height: 100% !important;
+        min-height: 100vh !important;
+      }
+
+      div[style*="position: absolute"] {
+        height: 100% !important;
+        min-height: 100vh !important;
+      }
+
+      div[class*="ScrollView"] {
+        height: 100% !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+
+      div[class*="KeyboardAvoidingView"] {
+        height: 100% !important;
+      }
+
+      /* Fix for all screens */
+      [data-rnw-root] {
+        height: 100vh !important;
+        min-height: 100vh !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

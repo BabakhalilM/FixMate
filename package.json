@@ -1,0 +1,22 @@
+{
+  "name": "fixmate",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "dev:api": "turbo dev --filter=@fixmate/api-server",
+    "build:api": "turbo build --filter=@fixmate/api-server",
+    "install:all": "npm install"
+  },
+  "devDependencies": {
+    "@angular-devkit/architect": "^0.2102.19",
+    "@angular-devkit/core": "^21.2.19",
+    "@angular-devkit/schematics": "^21.2.19",
+    "turbo": "^1.10.0"
+  }
+}

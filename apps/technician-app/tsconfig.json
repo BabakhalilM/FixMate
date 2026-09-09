@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-native",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@screens/*": [
+        "./src/screens/*"
+      ],
+      "@context/*": [
+        "./src/context/*"
+      ],
+      "@navigation/*": [
+        "./src/navigation/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@fixmate/shared-types": [
+        "../../packages/shared-types/src"
+      ],
+      "@fixmate/utils": [
+        "../../packages/utils/src"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "extends": "expo/tsconfig.base"
+}

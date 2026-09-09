@@ -1,0 +1,50 @@
+{
+  "name": "@fixmate/technician-app",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@expo/metro-runtime": "~57.0.8",
+    "@expo/vector-icons": "^15.0.2",
+    "@fixmate/shared-types": "1.0.0",
+    "@fixmate/utils": "1.0.0",
+    "@react-google-maps/api": "^2.20.8",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-navigation/native": "^7.3.13",
+    "@react-navigation/stack": "^7.10.16",
+    "aws-sdk": "^2.1693.0",
+    "axios": "^1.18.1",
+    "expo": "~57.0.7",
+    "expo-image-manipulator": "~57.0.10",
+    "expo-image-picker": "~57.0.9",
+    "expo-location": "~57.0.5",
+    "expo-notifications": "~57.0.6",
+    "expo-status-bar": "~57.0.1",
+    "leaflet": "^1.9.4",
+    "openai": "^7.10.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-leaflet": "^5.0.0",
+    "react-native": "0.86.0",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-maps": "^1.29.0",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-vector-icons": "^10.3.0",
+    "react-native-web": "^0.21.2",
+    "react-native-web-maps": "^0.3.0",
+    "uuid": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.22",
+    "@types/react": "~19.2.2",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "dev": "expo start",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "private": true
+}

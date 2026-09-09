@@ -1,0 +1,13 @@
+node_modules/
+dist/
+**/package-lock.json
+.DS_Store
+.env
+*.log
+
+# file.txt	Ignore specific file
+# *.log	Ignore all files with .log extension
+# folder/	Ignore folder and contents
+# **/file.txt	Ignore file.txt at any depth
+# folder/**/file.txt	Ignore file.txt inside folder at any depth
+# !important.log	Exception: don't ignore this file
