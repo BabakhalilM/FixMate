@@ -1,6 +1,7 @@
 {
   "installCommand": "npm install",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run vercel-build",
   "framework": "nodejs",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "packageManager": "npm"
 }
