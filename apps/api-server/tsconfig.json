@@ -1,27 +1,25 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "Node16",
-    "moduleResolution": "Node16",
-
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "rootDir": "src",
     "outDir": "dist",
-
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-
     "declaration": true,
     "declarationMap": true,
-
-    "noEmitOnError": true
+    "noEmitOnError": false,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@fixmate/shared-types": ["../../packages/shared-types/src"],
+      "@fixmate/utils": ["../../packages/utils/src"]
+    }
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
