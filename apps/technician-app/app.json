@@ -24,7 +24,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.babakhalilmsteam.technicianapp"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -33,14 +34,20 @@
       },
       "build": {
         "babel": {
-          "include": ["@react-navigation"]
+          "include": [
+            "@react-navigation"
+          ]
         }
       }
     },
     "extra": {
       "webStyles": {
         "inject": true
+      },
+      "eas": {
+        "projectId": "4b6531e5-d28e-4af8-858d-2e03d8212dbd"
       }
-    }
+    },
+    "owner": "babakhalilms-team"
   }
 }
