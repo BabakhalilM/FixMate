@@ -1,7 +1,7 @@
 {
   "installCommand": "npm install",
-  "buildCommand": "npm run vercel-build",
   "framework": "nodejs",
   "outputDirectory": "dist",
-  "packageManager": "npm"
+  "packageManager": "npm",
+   "buildCommand": "echo '--- package.json in node_modules ---' && cat node_modules/@fixmate/api-client/package.json && echo '--- contents ---' && ls -la node_modules/@fixmate/api-client && echo '--- is it a symlink? ---' && readlink -f node_modules/@fixmate/api-client && npx expo export --platform web"
 }
