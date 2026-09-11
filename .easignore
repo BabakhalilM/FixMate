@@ -1,0 +1,36 @@
+# .easignore
+# Copy everything from your .gitignore file here
+node_modules
+.git
+.expo
+dist
+
+# Ignore native directories (EAS will regenerate them)
+/android
+/ios
+# .easignore - place in project root (D:\Revison\FixMate\)
+
+# Ignore other apps you're not building
+apps/admin-dashboard
+apps/api-server
+apps/customer-app
+apps/landing-website
+
+# Ignore all node_modules
+node_modules
+apps/*/node_modules
+packages/*/node_modules
+
+# Ignore build outputs
+dist
+build
+.next
+
+# Ignore git and cache
+.git
+.turbo
+.expo
+
+# Ignore native directories (EAS generates these)
+android
+ios

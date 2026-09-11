@@ -11,7 +11,8 @@
     "dev": "npx turbo dev",
     "build": "npx turbo build",
     "start": "node apps/api-server/dist/index.js",
-    "vercel-build": "npm install && npx turbo build"
+    "vercel-build": "npm install && npx turbo build",
+    "eas-build-pre-install": "npm install && npx turbo build --filter=@fixmate/api-client --filter=@fixmate/shared-types --filter=@fixmate/utils"
   },
   "devDependencies": {
     "@angular-devkit/architect": "^0.2102.19",

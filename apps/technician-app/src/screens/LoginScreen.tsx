@@ -50,7 +50,7 @@ export default function LoginScreen() {
       await login(email, password);
     } catch (error: any) {
       const msg = error.message || "Login failed";
-
+      console.log("Login error:", error);
       setErrorMessage(msg);
 
       if (Platform.OS !== "web") {
