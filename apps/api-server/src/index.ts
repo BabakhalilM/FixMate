@@ -25,6 +25,7 @@ const allowedOrigins = [
   "http://localhost:3000", // Admin dashboard dev
   "http://localhost:5173", // Vite dev server (if used)
   "https://landing-website-orpin.vercel.app",
+  "https://fix-mate-technician-app-eight.vercel.app/",
 
   // Expo web hosting (EAS Hosting)
   
