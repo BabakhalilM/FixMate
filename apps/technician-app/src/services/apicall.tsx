@@ -15,7 +15,7 @@ export const apiClient = new ApiClient({
 export const authApi = createAuthApi(apiClient);
 
 const api = axios.create({
-  baseURL: process.env.API_URL ||"http://localhost:5000/api" || "http://192.168.137.1:5000/api",
+  baseURL: process.env.EXPO_PUBLIC_APP_URL ||"http://localhost:5000/api" || "http://192.168.137.1:5000/api",
   headers: {
     "Content-Type": "application/json",
   },
