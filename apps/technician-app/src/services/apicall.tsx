@@ -2,7 +2,7 @@ import axios from "axios";
 import { ApiClient, createAuthApi } from "@fixmate/api-client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_URL = process.env.TECHNICIAN_PUBLIC_API_URL ||"http://localhost:5000/api" ||"http://192.168.137.1:5000/api";
+const API_URL = process.env.EXPO_PUBLIC_APP_URL ||"http://localhost:5000/api" ||"http://192.168.137.1:5000/api";
 
 export const apiClient = new ApiClient({
   baseUrl: API_URL,
