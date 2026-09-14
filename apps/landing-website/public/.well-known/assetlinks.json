@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.babakhalilmsteam.technicianapp",
+    "sha256_cert_fingerprints": ["72:0A:2B:E0:13:20:7A:76:04:0C:95:E5:35:5B:08:9A:FA:FD:45:5D:8E:CD:F3:5D:3E:9B:91:DC:D4:6E:67:97"]
+  }
+}]

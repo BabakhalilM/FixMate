@@ -14,8 +14,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
+  const [showAppModal, setShowAppModal] = useState(false);
   const isFormValid = email.trim() !== "" && password.trim() !== "";
+  const [token, setToken] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,20 +27,101 @@ export default function LoginPage() {
       const response = await login({ email, password });
       console.log("login response", response);
       if (response.success) {
-        const token = response?.data?.token;
+        // const token = response?.data?.token;
+        setToken(response?.data?.token || "");
         const userRole = response?.data?.user?.role;
-        console.log("Login successful. User role:", userRole);
-        // ✅ Role-based redirect
+        const authToken = response?.data?.token;
+        const TECHNICIAN_DOMAIN =
+          process.env.NEXT_PUBLIC_TECHNICIAN_WEB_URL || "http://localhost:8081";
         switch (userRole) {
           case "customer":
             window.location.href = "http://localhost:8082";
             // router.push('/customer-dashboard');
             break;
+          // case "technician": {
+          //   const technicianUrl = token
+          //     ? `${process.env.EXPO_PUBLIC_TECHNICIAN_URL}?token=${encodeURIComponent(token)}`
+          //     : "http://localhost:8081";
+          //   window.location.href = technicianUrl;
+          //   break;
+          // }
+          // case "technician": {
+          //   const TECHNICIAN_WEB_URL =
+          //     process.env.EXPO_PUBLIC_TECHNICIAN_URL || "http://localhost:8081";
+
+          //   // Build the web fallback URL WITH the token
+          //   const webUrl = token
+          //     ? `${TECHNICIAN_WEB_URL}?token=${encodeURIComponent(token)}`
+          //     : TECHNICIAN_WEB_URL;
+
+          //   if (!token) {
+          //     window.location.href = webUrl;
+          //     break;
+          //   }
+
+          //   // Build the deep link URL
+          //   const schemeUrl = `fixmate://login?token=${encodeURIComponent(token)}`;
+
+          //   // Android uses the `intent://` syntax which handles fallback automatically
+          //   const isAndroid = /android/i.test(navigator.userAgent);
+          //   const androidIntentUrl =
+          //     `intent://login?token=${encodeURIComponent(token)}` +
+          //     `#Intent;scheme=fixmate;` +
+          //     `package=com.babakhalilmsteam.technicianapp;` +
+          //     `S.browser_fallback_url=${encodeURIComponent(webUrl)};` +
+          //     `end`;
+
+          //   // Track whether the app opened (best effort)
+          //   let appOpened = false;
+          //   const onVisibilityChange = () => {
+          //     if (document.hidden) appOpened = true;
+          //   };
+          //   window.addEventListener("visibilitychange", onVisibilityChange);
+
+          //   // Launch the app. Use a direct anchor click for best browser support.
+          //   const link = document.createElement("a");
+          //   link.href = isAndroid ? androidIntentUrl : schemeUrl;
+          //   link.rel = "noopener";
+          //   document.body.appendChild(link);
+          //   link.click();
+          //   document.body.removeChild(link);
+
+          //   // Fallback: after 1.5s, if the app didn't open, show the modal
+          //   setTimeout(() => {
+          //     window.removeEventListener(
+          //       "visibilitychange",
+          //       onVisibilityChange,
+          //     );
+
+          //     // Only show the modal if we're NOT on Android (Android handles its own fallback)
+          //     if (!appOpened && !isAndroid) {
+          //       setShowAppModal(true); // Show "Install App" vs "Continue in Browser"
+          //     }
+          //   }, 1500);
+
+          //   break;
+          // }
           case "technician": {
-            const technicianUrl = token
-              ? `http://localhost:8081?token=${encodeURIComponent(token)}`
-              : "http://localhost:8081";
-            window.location.href = technicianUrl;
+            const LANDING_URL = process.env.NEXT_PUBLIC_LANDING_URL; // ← Next.js domain
+            const authToken = response?.data?.token;
+
+            if (!LANDING_URL) {
+              console.error("NEXT_PUBLIC_LANDING_URL is not set");
+              setError("Configuration error. Please try again later.");
+              break;
+            }
+
+            if (!authToken) {
+              console.error("Technician login succeeded but no token returned");
+              setError("Login failed. Please try again.");
+              break;
+            }
+
+            // Build App Link using the NEXT.JS domain, not the Expo web domain
+            const appLinkUrl = `${LANDING_URL}/technician-login?token=${encodeURIComponent(authToken)}`;
+
+            console.log("Redirecting to App Link:", appLinkUrl);
+            window.location.href = appLinkUrl; // ← make sure this is uncommented
             break;
           }
           case "admin":
@@ -60,8 +142,40 @@ export default function LoginPage() {
     }
   };
 
+  // const handleInstallApp = () => {
+  //   // Replace with your actual Expo APK download URL
+  //   const apkUrl =
+  //     "https://expo.dev/accounts/YOUR_ACCOUNT/projects/YOUR_PROJECT/builds/BUILD_ID";
+  //   window.open(apkUrl, "_blank");
+  // };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-16">
+      {showAppModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+            <h2 className="text-xl font-bold mb-2">Open in App?</h2>
+            <p className="text-gray-600 mb-4">
+              Get the full experience in the FixMate Technician app.
+            </p>
+            <div className="flex flex-col gap-2">
+              <a
+                href="https://play.google.com/store/apps/details?id=com.babakhalilmsteam.technicianapp"
+                className="bg-blue-600 text-white px-4 py-2 rounded text-center"
+              >
+                Install App
+              </a>
+              <button
+                onClick={() => {
+                  window.location.href = `${process.env.EXPO_PUBLIC_TECHNICIAN_URL}?token=${encodeURIComponent(token)}`;
+                }}
+                className="border border-gray-300 px-4 py-2 rounded"
+              >
+                Continue in Browser
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">

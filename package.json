@@ -18,6 +18,11 @@
     "@angular-devkit/architect": "^0.2102.19",
     "@angular-devkit/core": "^21.2.19",
     "@angular-devkit/schematics": "^21.2.19",
+    "@expo/config-plugins": "~8.0.0",
+    "@swc/helpers": "^0.5.19",
     "turbo": "^1.10.0"
+  },
+  "dependencies": {
+    "merge-options": "^3.0.4"
   }
 }

@@ -1,10 +1,25 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async headers() {
+    return [
+      {
+        source: "/.well-known/assetlinks.json",
+        headers: [
+          { key: "Content-Type", value: "application/json" },
+          { key: "Cache-Control", value: "public, max-age=3600" },
+        ],
+      },
+    ];
+  },
   images: {
-    domains: ['images.unsplash.com', 'api.example.com'],
-    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+    formats: ["image/avif", "image/webp"],
   },
   experimental: {
     optimizeCss: true,
