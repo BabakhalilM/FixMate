@@ -1,8 +1,8 @@
 // app/technician-login/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 const ANDROID_PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.babakhalilmsteam.technicianapp";
@@ -11,9 +11,9 @@ const ANDROID_PLAY_STORE_URL =
 const APK_DIRECT_URL =
   "https://expo.dev/accounts/babakhalilms-team/projects/technician-app/builds";
 
-export default function TechnicianLoginFallback() {
+function TechnicianLoginContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
+
   const token = searchParams.get("token") || "";
 
   const [isAndroid, setIsAndroid] = useState(false);
@@ -25,6 +25,7 @@ export default function TechnicianLoginFallback() {
   const handleInstallApp = () => {
     // Prefer Play Store if published; otherwise direct APK link
     window.location.href = ANDROID_PLAY_STORE_URL;
+
     // Or for direct APK:
     // window.location.href = APK_DIRECT_URL;
   };
@@ -35,6 +36,7 @@ export default function TechnicianLoginFallback() {
       process.env.NEXT_PUBLIC_TECHNICIAN_WEB_URL ||
       "https://fix-mate-technician-app-eight.vercel.app"
     }?token=${encodeURIComponent(token)}`;
+
     window.location.href = webUrl;
   };
 
@@ -48,6 +50,7 @@ export default function TechnicianLoginFallback() {
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Open FixMate Technician
         </h1>
+
         <p className="text-gray-600 mb-8">
           Get the full experience in our mobile app, or continue in your
           browser.
@@ -75,6 +78,28 @@ export default function TechnicianLoginFallback() {
           Already installed? The app should open automatically. If not, tap
           "Install App" to reinstall.
         </p>
+      </div>
+    </div>
+  );
+}
+
+export default function TechnicianLoginFallback() {
+  return (
+    <Suspense fallback={<TechnicianLoginLoading />}>
+      <TechnicianLoginContent />
+    </Suspense>
+  );
+}
+
+function TechnicianLoginLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
+        <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="text-white font-bold text-2xl">F</span>
+        </div>
+
+        <p className="text-gray-600">Loading...</p>
       </div>
     </div>
   );
