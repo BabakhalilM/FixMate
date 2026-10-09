@@ -8,6 +8,7 @@
       "developmentClient": true,
       "distribution": "internal"
     },
+
     "preview": {
       "distribution": "internal",
       "android": {
@@ -15,7 +16,8 @@
       },
       "env": {
         "SENTRY_ORG": "babakhalilms-team",
-        "SENTRY_PROJECT": "react-native"
+        "SENTRY_PROJECT": "fixmate_technician",
+         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
     },
     "production": {
