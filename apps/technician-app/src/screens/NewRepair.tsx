@@ -33,6 +33,8 @@ import { useRepairs } from "@/context/repairContext";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
 import { DeviceConfigService } from "@/services";
+import { CircuitDiagram } from "@/navigation/circuteTypes";
+import CircuitDesigner from "@/components/CircuteDesigner";
 
 // ---------------------------------------------------------------------------
 // Cross-platform alert helper.
@@ -102,7 +104,10 @@ export default function NewRepair() {
   const route = useRoute<NewRepairRoute>();
   const { addRepair } = useRepairs();
   const { existingCustomer } = route.params ?? {};
-
+  const [circuitDiagram, setCircuitDiagram] = useState<CircuitDiagram>({
+    components: [],
+    wires: [],
+  });
   const [customer, setCustomer] = useState<any>(null);
   const [customerId, setCustomerId] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -110,7 +115,6 @@ export default function NewRepair() {
   const [checkingPhone, setCheckingPhone] = useState(false);
   const [deviceConfig, setDeviceConfig] = useState<any>(null);
 
-  
   const [repairData, setRepairData] = useState({
     customerId: "",
     customerName: "Baba",
@@ -379,14 +383,14 @@ export default function NewRepair() {
 
     try {
       console.log("🔄 Starting AI auto-fill process...");
-console.log("📋 Loading device configuration...");
-    const config = await DeviceConfigService.getDeviceTypeByName(
-      selectedDeviceTypeForAI,
-    );
-    console.log("✅ Device config loaded:", config);
-    
-    // Store in state for later use
-    setDeviceConfig(config);
+      console.log("📋 Loading device configuration...");
+      const config = await DeviceConfigService.getDeviceTypeByName(
+        selectedDeviceTypeForAI,
+      );
+      console.log("✅ Device config loaded:", config);
+
+      // Store in state for later use
+      setDeviceConfig(config);
 
       // Compress images
       const compressedImages = await Promise.all(
@@ -815,32 +819,8 @@ console.log("📋 Loading device configuration...");
         "deviceSpecs",
         JSON.stringify(repairData.deviceSpecs || {}),
       );
+      formData.append('circuitDiagram', JSON.stringify(circuitDiagram));
       console.log("Appending images:", processedImages);
-      // processedImages.forEach((uri, index) => {
-      //   // Get filename from URI
-      //   const filename = uri.split("/").pop() || `image_${index}.jpg`;
-
-      //   // Determine mime type
-      //   let mimeType = "image/jpeg";
-      //   if (uri.endsWith(".png")) mimeType = "image/png";
-      //   else if (uri.endsWith(".webp")) mimeType = "image/webp";
-      //   else if (uri.startsWith("data:image")) {
-      //     // Extract mime type from data URL
-      //     const match = uri.match(/^data:image\/(\w+);base64,/);
-      //     if (match) {
-      //       mimeType = `image/${match[1]}`;
-      //     }
-      //   }
-
-      //   const fileObject = {
-      //     uri: uri,
-      //     type: mimeType,
-      //     name: filename,
-      //   };
-
-      //   console.log(`Adding file ${index}:`, fileObject);
-      //   formData.append("images", fileObject as any);
-      // });
       for (let index = 0; index < processedImages.length; index++) {
         const uri = processedImages[index];
 
@@ -1398,7 +1378,30 @@ console.log("📋 Loading device configuration...");
 
         {/* Device Specifications */}
         {renderDeviceSpecs()}
+        {/* Circuit Diagram */}
+        <View style={styles.section}>
+          <View style={styles.imageSectionHeader}>
+            <View style={styles.sectionHeaderLeft}>
+              <Ionicons
+                name="hardware-chip-outline"
+                size={20}
+                color="#4F46E5"
+              />
+              <Text style={styles.sectionTitle}>Circuit Diagram</Text>
+            </View>
+          </View>
+          <Text style={styles.imageDescription}>
+            Sketch the circuit you're diagnosing — place components, connect
+            pins, and mark faulty parts.
+          </Text>
 
+          <View style={{ height: 560, borderRadius: 12, overflow: "hidden" }}>
+            <CircuitDesigner
+              value={circuitDiagram}
+              onChange={setCircuitDiagram}
+            />
+          </View>
+        </View>
         {/* Repair Details */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Repair Details</Text>

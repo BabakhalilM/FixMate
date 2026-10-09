@@ -12,6 +12,10 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "SENTRY_ORG": "babakhalilms-team",
+        "SENTRY_PROJECT": "react-native"
       }
     },
     "production": {

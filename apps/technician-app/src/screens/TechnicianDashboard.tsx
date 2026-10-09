@@ -33,6 +33,9 @@ export default function TechnicianDashboard() {
     totalCustomers,
     setTotalCustomers 
   } = useRepairs();
+  console.log("🎯 Dashboard render:", {
+    user,
+  });
 
   const [recentRepairs, setRecentRepairs] = useState(repairs.slice(0, 5));
 

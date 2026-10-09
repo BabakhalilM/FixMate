@@ -99,7 +99,7 @@ class CustomerService {
     try {
       if (this.useApi) {
         try {
-          const response = await api.get(`/users/getcustomers/${id}`);
+          const response = await api.get(`/users/getCustomers/${id}`);
           if (response.data.success) {
             return response.data.data;
           }

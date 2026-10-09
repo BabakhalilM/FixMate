@@ -21,6 +21,15 @@ import ScreenWrapper from "@/components/ScreenWrapper";
 import { useRepairs } from "@/context/repairContext";
 import repairService from "@/services/RepairService";
 import { DEVICE_TYPES } from "@/utils/data";
+import Svg, { G, Circle, Path, Text as SvgText } from "react-native-svg";
+import {
+  CircuitComponent,
+  CircuitDiagram,
+  CircuitWire,
+} from "@/navigation/circuteTypes";
+import { getLibraryItem } from "@/utils/CircuteLibrary";
+// import { CircuitDiagram, CircuitComponent, CircuitWire } from "@/types/circuit";
+// import { getLibraryItem } from "@/utils/circuitLibrary";
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 type RouteParams = {
@@ -120,16 +129,20 @@ export default function RepairDetailScreen() {
     deviceSpecs: {} as Record<string, any>,
   });
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const diagram: CircuitDiagram = repair?.circuitDiagram ?? {
+    components: [],
+    wires: [],
+  };
 
   useEffect(() => {
     loadRepairDetails();
   }, [repairId, repairs]);
-  
+
   const loadRepairDetails = () => {
     setLoading(true);
     const repairData = getRepairById(repairId);
-    
-    console.log("repair details component repair",repairData);
+
+    console.log("repair details component repair", repairData);
     if (repairData) {
       setRepair(repairData);
       setSelectedStatus(repairData.status);
@@ -304,6 +317,198 @@ export default function RepairDetailScreen() {
         return "#F3F4F6";
     }
   };
+  // ── Read-only circuit rendering ──────────────────────────
+  const pinAbs = (
+    comp: CircuitComponent,
+    pin: { offsetX: number; offsetY: number },
+  ) => {
+    const r = ((comp.rotation ?? 0) * Math.PI) / 180;
+    const rx = pin.offsetX * Math.cos(r) - pin.offsetY * Math.sin(r);
+    const ry = pin.offsetX * Math.sin(r) + pin.offsetY * Math.cos(r);
+    return { x: comp.x + rx, y: comp.y + ry };
+  };
+
+  const wirePath = (x1: number, y1: number, x2: number, y2: number) => {
+    const midX = (x1 + x2) / 2;
+    return `M ${x1} ${y1} L ${midX} ${y1} L ${midX} ${y2} L ${x2} ${y2}`;
+  };
+
+  const renderWireReadOnly = (wire: CircuitWire) => {
+    const fromComp = diagram.components.find(
+      (c) => c.id === wire.from.componentId,
+    );
+    const toComp = diagram.components.find((c) => c.id === wire.to.componentId);
+    if (!fromComp || !toComp) return null;
+
+    const fromPin = fromComp.pins.find((p) => p.id === wire.from.pinId);
+    const toPin = toComp.pins.find((p) => p.id === wire.to.pinId);
+    if (!fromPin || !toPin) return null;
+
+    const a = pinAbs(fromComp, fromPin);
+    const b = pinAbs(toComp, toPin);
+
+    return (
+      <Path
+        key={wire.id}
+        d={wirePath(a.x, a.y, b.x, b.y)}
+        stroke={wire.color ?? "#111827"}
+        strokeWidth={2}
+        fill="none"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    );
+  };
+
+  const renderComponentReadOnly = (comp: CircuitComponent) => {
+    const lib = getLibraryItem(comp.kind);
+    if (!lib) return null;
+
+    const strokeColor = comp.faulty ? "#DC2626" : "#111827";
+    const strokeWidth = comp.faulty ? 2.5 : 1.5;
+
+    // Compute canvas bounds; keep the SVG sized around components
+    return (
+      <G
+        key={comp.id}
+        transform={`translate(${comp.x} ${comp.y}) rotate(${comp.rotation ?? 0})`}
+      >
+        {/* Simple outlined body — swap for a BodyForKind mirror if you want
+          the exact same shapes as the designer */}
+        <Circle
+          cx={0}
+          cy={0}
+          r={Math.max(lib.width, lib.height) / 2}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          fill={comp.faulty ? "#FEE2E2" : "#FFFFFF"}
+        />
+
+        {comp.label ? (
+          <SvgText
+            x={0}
+            y={-Math.max(lib.width, lib.height) / 2 - 6}
+            fontSize={11}
+            fill="#4F46E5"
+            textAnchor="middle"
+            fontWeight="bold"
+          >
+            {comp.label}
+          </SvgText>
+        ) : null}
+
+        {comp.value ? (
+          <SvgText
+            x={0}
+            y={Math.max(lib.width, lib.height) / 2 + 14}
+            fontSize={10}
+            fill="#6B7280"
+            textAnchor="middle"
+          >
+            {comp.value}
+          </SvgText>
+        ) : null}
+
+        {comp.pins.map((pin) => (
+          <Circle
+            key={pin.id}
+            cx={pin.offsetX}
+            cy={pin.offsetY}
+            r={4}
+            fill="#FFFFFF"
+            stroke="#111827"
+            strokeWidth={1.5}
+          />
+        ))}
+      </G>
+    );
+  };
+
+  // Canvas bounds so the SVG isn't fixed at 800x600 and clips big diagrams
+  const diagramBounds = (() => {
+    if (diagram.components.length === 0) {
+      return { width: 400, height: 300 };
+    }
+    let maxX = 0;
+    let maxY = 0;
+    for (const c of diagram.components) {
+      if (c.x > maxX) maxX = c.x;
+      if (c.y > maxY) maxY = c.y;
+    }
+    return {
+      width: Math.max(400, maxX + 200),
+      height: Math.max(300, maxY + 200),
+    };
+  })();
+
+  const renderCircuitDiagram = () => {
+    if (!diagram.components.length) return null;
+
+    return (
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Ionicons name="hardware-chip-outline" size={20} color="#4F46E5" />
+          <Text
+            style={[styles.sectionTitle, { marginBottom: 0, marginLeft: 8 }]}
+          >
+            Circuit Diagram
+          </Text>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={true}
+          style={{
+            marginTop: 12,
+            borderRadius: 12,
+            backgroundColor: "#F8FAFC",
+          }}
+        >
+          <ScrollView
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ padding: 8 }}
+          >
+            <Svg width={diagramBounds.width} height={diagramBounds.height}>
+              {/* Grid */}
+              {Array.from({ length: Math.ceil(diagramBounds.width / 20) }).map(
+                (_, i) => (
+                  <Path
+                    key={`v${i}`}
+                    d={`M ${i * 20} 0 L ${i * 20} ${diagramBounds.height}`}
+                    stroke="#E5E7EB"
+                    strokeWidth={0.3}
+                  />
+                ),
+              )}
+              {Array.from({ length: Math.ceil(diagramBounds.height / 20) }).map(
+                (_, i) => (
+                  <Path
+                    key={`h${i}`}
+                    d={`M 0 ${i * 20} L ${diagramBounds.width} ${i * 20}`}
+                    stroke="#E5E7EB"
+                    strokeWidth={0.3}
+                  />
+                ),
+              )}
+
+              {diagram.wires.map(renderWireReadOnly)}
+              {diagram.components.map(renderComponentReadOnly)}
+            </Svg>
+          </ScrollView>
+        </ScrollView>
+
+        {/* Faulty legend */}
+        {diagram.components.some((c) => c.faulty) && (
+          <View style={styles.faultyLegend}>
+            <View style={styles.faultyDot} />
+            <Text style={styles.faultyLegendText}>
+              Faulty component(s) highlighted in red
+            </Text>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   const getDeviceIcon = (deviceType: string) => {
     const device = DEVICE_TYPES.find((d) => d.id === deviceType);
@@ -375,6 +580,10 @@ export default function RepairDetailScreen() {
     // Fallback: Display all specs as key-value pairs
     return (
       <View style={styles.section}>
+        {renderDeviceSpecs()}
+
+        {/* Circuit Diagram */}
+        {renderCircuitDiagram()}
         <Text style={styles.sectionTitle}>Device Specifications</Text>
         {Object.entries(specs).map(([key, value]) => {
           if (value === undefined || value === null || value === "")
@@ -983,6 +1192,26 @@ export default function RepairDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  faultyLegend: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+    gap: 6,
+  },
+  faultyDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#DC2626",
+  },
+  faultyLegendText: {
+    fontSize: 12,
+    color: "#6B7280",
+  },
   container: {
     flex: 1,
     backgroundColor: "#F3F4F6",

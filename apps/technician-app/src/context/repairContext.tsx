@@ -1,8 +1,14 @@
 // apps/technician-app/src/context/RepairContext.tsx
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { useAuth } from './AuthContext';
-import repairService, { Repair, RepairStats } from '@/services/RepairService';
-import { Alert } from 'react-native';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import { useAuth } from "./AuthContext";
+import repairService, { Repair, RepairStats } from "@/services/RepairService";
+import { Alert } from "react-native";
 
 // Dashboard specific stats
 export interface DashboardStats {
@@ -45,21 +51,28 @@ export function RepairProvider({ children }: { children: React.ReactNode }) {
   // Calculate stats from repairs
   const calculateStats = useCallback((repairsList: Repair[]): RepairStats => {
     const total = repairsList.length;
-    const pending = repairsList.filter(r => r.status === 'pending').length;
-    const inProgress = repairsList.filter(r => r.status === 'in-progress').length;
-    const completed = repairsList.filter(r => r.status === 'completed').length;
-    const cancelled = repairsList.filter(r => r.status === 'cancelled').length;
-    
+    const pending = repairsList.filter((r) => r.status === "pending").length;
+    const inProgress = repairsList.filter(
+      (r) => r.status === "in-progress",
+    ).length;
+    const completed = repairsList.filter(
+      (r) => r.status === "completed",
+    ).length;
+    const cancelled = repairsList.filter(
+      (r) => r.status === "cancelled",
+    ).length;
+
     const totalEarnings = repairsList
-      .filter(r => r.status === 'completed')
+      .filter((r) => r.status === "completed")
       .reduce((sum, r) => sum + (r.charges || 0), 0);
 
     const statusDistribution = { pending, inProgress, completed, cancelled };
     const priorityDistribution = { low: 0, medium: 0, high: 0, urgent: 0 };
-    
-    repairsList.forEach(r => {
+
+    repairsList.forEach((r) => {
       if (r.priority) {
-        priorityDistribution[r.priority] = (priorityDistribution[r.priority] || 0) + 1;
+        priorityDistribution[r.priority] =
+          (priorityDistribution[r.priority] || 0) + 1;
       }
     });
 
@@ -74,39 +87,56 @@ export function RepairProvider({ children }: { children: React.ReactNode }) {
       earnings: {
         totalEarnings,
         averageCharge: completed > 0 ? totalEarnings / completed : 0,
-        minCharge: completed > 0 ? Math.min(...repairsList.filter(r => r.status === 'completed').map(r => r.charges || 0)) : 0,
-        maxCharge: completed > 0 ? Math.max(...repairsList.filter(r => r.status === 'completed').map(r => r.charges || 0)) : 0,
-      }
+        minCharge:
+          completed > 0
+            ? Math.min(
+                ...repairsList
+                  .filter((r) => r.status === "completed")
+                  .map((r) => r.charges || 0),
+              )
+            : 0,
+        maxCharge:
+          completed > 0
+            ? Math.max(
+                ...repairsList
+                  .filter((r) => r.status === "completed")
+                  .map((r) => r.charges || 0),
+              )
+            : 0,
+      },
     };
   }, []);
 
   // Calculate dashboard stats
-  const calculateDashboardStats = useCallback((repairsList: Repair[]): DashboardStats => {
-    const today = new Date().toDateString();
-    const todayRepairs = repairsList.filter(
-      (r) => new Date(r.createdAt).toDateString() === today
-    );
+  const calculateDashboardStats = useCallback(
+    (repairsList: Repair[]): DashboardStats => {
+      const today = new Date().toDateString();
+      const todayRepairs = repairsList.filter(
+        (r) => new Date(r.createdAt).toDateString() === today,
+      );
 
-    const completedRepairs = repairsList.filter(
-      (r) => r.status === 'completed'
-    );
+      const completedRepairs = repairsList.filter(
+        (r) => r.status === "completed",
+      );
 
-    const totalEarnings = completedRepairs.reduce(
-      (sum, r) => sum + (r.charges || 0),
-      0
-    );
+      const totalEarnings = completedRepairs.reduce(
+        (sum, r) => sum + (r.charges || 0),
+        0,
+      );
 
-    return {
-      totalCustomers: totalCustomers,
-      totalRepairs: repairsList.length,
-      pendingRepairs: repairsList.filter(
-        (r) => r.status === 'pending' || r.status === 'in-progress'
-      ).length,
-      completedRepairs: completedRepairs.length,
-      monthlyEarnings: totalEarnings,
-      todayRepairs: todayRepairs.length,
-    };
-  }, [totalCustomers]);
+      return {
+        totalCustomers: totalCustomers,
+        totalRepairs: repairsList.length,
+        pendingRepairs: repairsList.filter(
+          (r) => r.status === "pending" || r.status === "in-progress",
+        ).length,
+        completedRepairs: completedRepairs.length,
+        monthlyEarnings: totalEarnings,
+        todayRepairs: todayRepairs.length,
+      };
+    },
+    [totalCustomers],
+  );
 
   // Load repairs from API
   const loadRepairs = useCallback(async () => {
@@ -115,17 +145,18 @@ export function RepairProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await repairService.getRepairs();
+      const technicianId = String(user.id); // whatever field points to the technician
+
+      const response = await repairService.getRepairs({ technicianId });
       const repairsList = response?.repairs || [];
-      
+
       setRepairs(repairsList);
       setLastUpdated(new Date());
-      
+
       console.log(`✅ Loaded ${repairsList.length} repairs`);
     } catch (error: any) {
-      console.error('Error loading repairs:', error);
-      setError(error.message || 'Failed to load repairs');
+      console.error("Error loading repairs:", error);
+      setError(error.message || "Failed to load repairs");
     } finally {
       setLoading(false);
     }
@@ -138,10 +169,10 @@ export function RepairProvider({ children }: { children: React.ReactNode }) {
 
   // Add a new repair
   const addRepair = useCallback((repair: Repair) => {
-    setRepairs(prev => {
-      const exists = prev.some(r => r._id === repair._id);
+    setRepairs((prev) => {
+      const exists = prev.some((r) => r._id === repair._id);
       if (exists) {
-        return prev.map(r => r._id === repair._id ? repair : r);
+        return prev.map((r) => (r._id === repair._id ? repair : r));
       }
       return [repair, ...prev];
     });
@@ -150,22 +181,23 @@ export function RepairProvider({ children }: { children: React.ReactNode }) {
 
   // Update an existing repair
   const updateRepair = useCallback((repair: Repair) => {
-    setRepairs(prev => 
-      prev.map(r => r._id === repair._id ? repair : r)
-    );
+    setRepairs((prev) => prev.map((r) => (r._id === repair._id ? repair : r)));
     setLastUpdated(new Date());
   }, []);
 
   // Delete a repair
   const deleteRepair = useCallback((repairId: string) => {
-    setRepairs(prev => prev.filter(r => r._id !== repairId));
+    setRepairs((prev) => prev.filter((r) => r._id !== repairId));
     setLastUpdated(new Date());
   }, []);
 
   // Get repair by ID
-  const getRepairById = useCallback((id: string) => {
-    return repairs.find(r => r._id === id);
-  }, [repairs]);
+  const getRepairById = useCallback(
+    (id: string) => {
+      return repairs.find((r) => r._id === id);
+    },
+    [repairs],
+  );
 
   // Clear all repairs
   const clearRepairs = useCallback(() => {
@@ -207,9 +239,7 @@ export function RepairProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <RepairContext.Provider value={value}>
-      {children}
-    </RepairContext.Provider>
+    <RepairContext.Provider value={value}>{children}</RepairContext.Provider>
   );
 }
 
@@ -217,7 +247,7 @@ export function RepairProvider({ children }: { children: React.ReactNode }) {
 export function useRepairs() {
   const context = useContext(RepairContext);
   if (context === undefined) {
-    throw new Error('useRepairs must be used within a RepairProvider');
+    throw new Error("useRepairs must be used within a RepairProvider");
   }
   return context;
 }

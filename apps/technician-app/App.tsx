@@ -5,10 +5,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { View, Platform, StyleSheet, TouchableOpacity } from "react-native";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
-import SplashScreen from "@/screens/SplashScreen";
-import OnboardingScreen from "@/screens/OnboardingScreen";
-import LoginScreen from "@/screens/LoginScreen";
-import RegisterScreen from "@/screens/RegisterScreen";
+import SplashScreen from "@/screens/login/SplashScreen";
+import OnboardingScreen from "@/screens/login/OnboardingScreen";
+import LoginScreen from "@/screens/login/LoginScreen";
+import RegisterScreen from "@/screens/login/RegisterScreen";
 import TechnicianDashboard from "@/screens/TechnicianDashboard";
 import JobDetailScreen from "@/screens/JobDetailScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
@@ -27,6 +27,35 @@ import SupportScreen from "@/screens/SupportsScreen";
 import PrivacyScreen from "@/screens/PrivacyScreen";
 import { RepairProvider } from "@/context/repairContext";
 import RepairDetailScreen from "@/screens/RepairDetailScreen";
+import * as Sentry from "@sentry/react-native";
+import RepairsScreen from "@/screens/RepairsScreen";
+import CustomersScreen from "@/screens/CustomersScreen";
+import ServiceDetailScreen from "@/screens/ServicesDetailsScreen";
+import AvailabilityScreen from "@/screens/AvailabilityScreen";
+import CustomerDetailScreen from "@/screens/CustomerDetailScreen";
+import ForgotPasswordScreen from "@/screens/login/ForgotPassword";
+
+Sentry.init({
+  dsn: "https://7646562e92fcb0acf7bc223d91b5ea9f@o4512071233175552.ingest.us.sentry.io/4512071272562688",
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -85,147 +114,132 @@ function AppNavigator() {
 
   if (isAuthenticated) {
     return (
-        <RepairProvider>
-
-      <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen name="JobDetail" component={JobDetailScreen} />
-        <Stack.Screen name="Dashboard" component={TechnicianDashboard} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
-        <Stack.Screen name="MyServices" component={MyServicesScreen} />
-        <Stack.Screen name="Reviews" component={ReviewsScreen} />
-        <Stack.Screen
-          name="PaymentSettings"
-          component={PaymentSettingsScreen}
-        />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
-        <Stack.Screen name="Support" component={SupportScreen} />
-        <Stack.Screen name="Privacy" component={PrivacyScreen} />
-
-        <Stack.Screen
-          name="TechnicianDashboard"
-          component={TechnicianDashboard}
-          options={{
-            headerShown: false,
-          }}
-        />
-
-        {/* Customer Management */}
-        <Stack.Screen
-          name="CustomerSearch"
-          component={CustomerSearch}
-          options={{
-            headerShown: false,
-          }}
-        />
-
-        {/* <Stack.Screen
-          name="AddCustomer"
-          component={AddCustomer}
-          options={{
-            title: "Add Customer",
-            headerShown: true,
+      <RepairProvider>
+        <Stack.Navigator screenOptions={screenOptions}>
+          <Stack.Screen name="Dashboard" component={TechnicianDashboard} />
+          <Stack.Screen name="JobDetail" component={JobDetailScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
+          <Stack.Screen name="MyServices" component={MyServicesScreen} />
+          <Stack.Screen name="Availability" component={AvailabilityScreen} />
+          <Stack.Screen name="Reviews" component={ReviewsScreen} />
+          <Stack.Screen
+            name="PaymentSettings"
+            component={PaymentSettingsScreen}
+          />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          <Stack.Screen name="Support" component={SupportScreen} />
+          <Stack.Screen name="Privacy" component={PrivacyScreen} />
+          <Stack.Screen name="ServiceDetail" component={ServiceDetailScreen} />
+          <Stack.Screen
+            name="TechnicianDashboard"
+            component={TechnicianDashboard}
+            options={{
+              headerShown: false,
             }}
-        /> */}
-
-        {/* <Stack.Screen
-          name="CustomerHistory"
-          component={CustomerHistory}
-          options={{
-            title: "Customer History",
-            headerShown: true,
-            }}
-            /> */}
-
-        {/* Repair Management */}
-        <Stack.Screen
-          name="NewRepair"
-          component={NewRepair}
-          options={{
-            headerShown: false,
-          }}
           />
 
-        <Stack.Screen
-          name="RepairDetail"
-          component={RepairDetailScreen}
-          options={{
-            title: "Repair Details",
-            headerShown: true,
+          {/* Customer Management */}
+          <Stack.Screen
+            name="CustomerSearch"
+            component={CustomerSearch}
+            options={{
+              headerShown: false,
             }}
-        />
-
-        {/* <Stack.Screen
-          name="Jobs"
-          component={Jobs}
-          options={{
-            title: "All Jobs",
-            headerShown: true,
-            }}
-        /> */}
-
-        {/* Device Configuration */}
-        <Stack.Screen
-          name="DeviceTypeManager"
-          component={DeviceTypeManager}
-          options={{
-            title: "Device Configuration",
-            headerShown: true,
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => {
-                  // You can add a help or info button here
-                  console.log("Help pressed");
-                }}
-                style={{ marginRight: 16 }}
-              >
-                <Ionicons name="help-circle-outline" size={24} color="#fff" />
-              </TouchableOpacity>
-            ),
-          }}
-        />
-
-        {/* Earnings & Inventory */}
-        <Stack.Screen
-          name="Earnings"
-          component={EarningsScreen}
-          options={{
-            title: "Earnings",
-            headerShown: true,
-          }}
           />
 
-        {/* <Stack.Screen
-          name="Inventory"
-          component={Inventory}
-          options={{
-            title: "Inventory",
-            headerShown: true,
-            }}
-            /> */}
+          {/* <Stack.Screen
+                  name="AddCustomer"
+                  component={AddCustomer}
+                  options={{
+                    title: "Add Customer",
+                    headerShown: true,
+                    }}
+                /> */}
 
-        {/* Profile */}
-        {/* <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            title: "Profile",
-            headerShown: true,
+          {/* <Stack.Screen
+                  name="CustomerHistory"
+                  component={CustomerHistory}
+                  options={{
+                    title: "Customer History",
+                    headerShown: true,
+                    }}
+                    /> */}
+
+          {/* Repair Management */}
+          <Stack.Screen
+            name="NewRepair"
+            component={NewRepair}
+            options={{
+              headerShown: false,
             }}
-            /> */}
-      </Stack.Navigator>
-    </RepairProvider>
+          />
+          <Stack.Screen
+            name="DeviceTypeManager"
+            component={DeviceTypeManager}
+            options={{
+              title: "Device Configuration",
+              headerShown: true,
+              headerRight: () => (
+                <TouchableOpacity
+                  onPress={() => {
+                    // You can add a help or info button here
+                    console.log("Help pressed");
+                  }}
+                  style={{ marginRight: 16 }}
+                >
+                  <Ionicons name="help-circle-outline" size={24} color="#fff" />
+                </TouchableOpacity>
+              ),
+            }}
+          />
+
+          <Stack.Screen
+            name="Earnings"
+            component={EarningsScreen}
+            options={{
+              title: "Earnings",
+              headerShown: false,
+            }}
+          />
+
+          {/* <Stack.Screen
+                  name="Inventory"
+                  component={Inventory}
+                  options={{
+                    title: "Inventory",
+                    headerShown: true,
+                    }}
+                /> */}
+          <Stack.Screen name="Customers" component={CustomersScreen} />
+          <Stack.Screen
+            name="CustomerDetail"
+            component={CustomerDetailScreen}
+          />
+          {/* <Stack.Screen name="AddCustomer" component={AddCustomerScreen} />
+              <Stack.Screen name="CustomerSearch" component={CustomerSearchScreen} /> */}
+          <Stack.Screen name="Repairs" component={RepairsScreen} />
+          <Stack.Screen name="RepairDetail" component={RepairDetailScreen} />
+        </Stack.Navigator>
+      </RepairProvider>
     );
   }
 
   return (
-    <Stack.Navigator
-      screenOptions={screenOptions}
-      initialRouteName={isRegistered ? "Login" : "Register"}
-    >
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Navigator screenOptions={screenOptions}>
+      {isRegistered ? (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
@@ -236,7 +250,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function App() {
+export default Sentry.wrap(function App() {
   useEffect(() => {
     if (Platform.OS === "web") {
       const styleTag = document.createElement("style");
@@ -257,4 +271,4 @@ export default function App() {
       </AuthProvider>
     </SafeAreaProvider>
   );
-}
+});

@@ -42,3 +42,5 @@ yarn-error.*
 # Credentials — never commit
 credentials.json
 credentials/
+
+.env.local

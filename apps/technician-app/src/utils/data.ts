@@ -13,29 +13,29 @@
 //     "Printer Repair",
 //   ];
 
-  export const DEVICE_TYPES = [
+export const DEVICE_TYPES = [
   {
-    id: "AC",
+    id: "ac",
     label: "AC Repair",
     icon: "❄️",
   },
   {
-    id: "Refrigerator",
+    id: "refrigerator",
     label: "Refrigerator Repair",
     icon: "🧊",
   },
   {
-    id: "Washing_Machine",
+    id: "washing_machine",
     label: "Washing Machine Repair",
     icon: "🧺",
   },
   {
-    id: "TV",
+    id: "tv",
     label: "TV Repair",
     icon: "📺",
   },
   {
-    id: "Laptop",
+    id: "laptop",
     label: "Laptop Repair",
     icon: "💻",
   },
@@ -50,27 +50,27 @@
     icon: "⚡",
   },
   {
-    id: "Water_Pump",
+    id: "water_pump",
     label: "Water Pump Repair",
     icon: "💧",
   },
   {
-    id: "CCTV_Installation",
+    id: "cctv_installation",
     label: "CCTV Installation",
     icon: "📹",
   },
   {
-    id: "UPS/Inverter",
+    id: "ups_inverter",
     label: "UPS/Inverter Repair",
     icon: "🔋",
   },
   {
-    id: "Microwave",
+    id: "microwave",
     label: "Microwave Repair",
     icon: "🍲",
   },
   {
-    id: "Printer",
+    id: "printer",
     label: "Printer Repair",
     icon: "🖨️",
   },

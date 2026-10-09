@@ -1,5 +1,6 @@
 // apps/technician-app/src/services/RepairService.ts
 
+import { CircuitDiagram } from "@/navigation/circuteTypes";
 import api from "./apicall";
 
 // ─────────────────────────────────────────────
@@ -41,6 +42,7 @@ export interface Repair {
   updatedAt: string;
 
   images?: string[];
+  circuitDiagram?: CircuitDiagram;
 }
 
 export interface CreateRepairData {

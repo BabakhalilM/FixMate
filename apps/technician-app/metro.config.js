@@ -1,25 +1,16 @@
-const { getDefaultConfig } = require('expo/metro-config');
+// apps/technician-app/metro.config.js
+const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 const path = require('path');
 
-const projectRoot = __dirname;
-const workspaceRoot = path.resolve(projectRoot, '../..');
+// Use getSentryExpoConfig instead of getDefaultConfig
+// We also pass the includeWebReplay: false option to exclude the problematic package
+const config = getSentryExpoConfig(__dirname, {
+  includeWebReplay: false,
+});
 
-const config = getDefaultConfig(projectRoot);
-
-// 1. Watch all files within the monorepo
-config.watchFolders = [workspaceRoot];
-
-// 2. Let Metro know where to resolve packages and in what order
-config.resolver.nodeModulesPaths = [
-  path.resolve(projectRoot, 'node_modules'),
-  path.resolve(workspaceRoot, 'node_modules'),
-];
-
-// 3. Ensure Metro can resolve TypeScript source files directly
-config.resolver.sourceExts = ['js', 'jsx', 'ts', 'tsx', 'json'];
-
-// IMPORTANT: Do NOT set disableHierarchicalLookup to true in a monorepo.
-// It prevents Metro from finding transitive dependencies like expo-asset.
-// config.resolver.disableHierarchicalLookup = true; // REMOVED
+// Add your custom merge-options alias
+config.resolver.extraNodeModules = {
+  'merge-options': path.resolve(__dirname, 'node_modules/merge-options'),
+};
 
 module.exports = config;

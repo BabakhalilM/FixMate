@@ -6,10 +6,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { View, Platform, StyleSheet, TouchableOpacity } from "react-native";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
-import SplashScreen from "@/screens/SplashScreen";
-import OnboardingScreen from "@/screens/OnboardingScreen";
-import LoginScreen from "@/screens/LoginScreen";
-import RegisterScreen from "@/screens/RegisterScreen";
+import SplashScreen from "@/screens/login/SplashScreen";
+import OnboardingScreen from "@/screens/login/OnboardingScreen";
+import LoginScreen from "@/screens/login/LoginScreen";
+import RegisterScreen from "@/screens/login/RegisterScreen";
 import TechnicianDashboard from "@/screens/TechnicianDashboard";
 import JobDetailScreen from "@/screens/JobDetailScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
@@ -34,25 +34,27 @@ import PersonalInfoScreen from "@/screens/PersonalInfoScreen";
 import ServiceDetailScreen from "@/screens/ServicesDetailsScreen";
 import { RepairProvider } from "@/context/repairContext";
 import RepairDetailScreen from "@/screens/RepairDetailScreen";
+import JobsScreen from "@/screens/JobScreen";
+import CustomerDetailScreen from "@/screens/CustomerDetailScreen";
+import ForgotPasswordScreen from "@/screens/login/ForgotPassword";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
-  const {
-    isLoading,
-    isAuthenticated,
-    hasCompletedOnboarding,
-    isRegistered,
-  } = useAuth();
+  const { isLoading, isAuthenticated, hasCompletedOnboarding, isRegistered } =
+    useAuth();
 
   // Web-specific screen options with proper height
   const screenOptions = {
     headerShown: false,
-    cardStyle: Platform.OS === 'web' ? ({
-      height: '100vh',
-      minHeight: '100vh',
-      flex: 1,
-    } as any) : undefined,
+    cardStyle:
+      Platform.OS === "web"
+        ? ({
+            height: "100vh",
+            minHeight: "100vh",
+            flex: 1,
+          } as any)
+        : undefined,
   };
 
   if (isLoading) {
@@ -74,38 +76,40 @@ function AppNavigator() {
   if (isAuthenticated) {
     return (
       <RepairProvider>
+        <Stack.Navigator screenOptions={screenOptions}>
+          <Stack.Screen name="Dashboard" component={TechnicianDashboard} />
+          <Stack.Screen name="JobDetail" component={JobDetailScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
+          <Stack.Screen name="MyServices" component={MyServicesScreen} />
+          <Stack.Screen name="Availability" component={AvailabilityScreen} />
+          <Stack.Screen name="Reviews" component={ReviewsScreen} />
+          <Stack.Screen
+            name="PaymentSettings"
+            component={PaymentSettingsScreen}
+          />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          <Stack.Screen name="Support" component={SupportScreen} />
+          <Stack.Screen name="Privacy" component={PrivacyScreen} />
+          <Stack.Screen name="ServiceDetail" component={ServiceDetailScreen} />
+          <Stack.Screen
+            name="TechnicianDashboard"
+            component={TechnicianDashboard}
+            options={{
+              headerShown: false,
+            }}
+          />
 
-      <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen name="Dashboard" component={TechnicianDashboard} />
-        <Stack.Screen name="JobDetail" component={JobDetailScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
-        <Stack.Screen name="MyServices" component={MyServicesScreen} />
-        <Stack.Screen name="Availability" component={AvailabilityScreen} />
-        <Stack.Screen name="Reviews" component={ReviewsScreen} />
-        <Stack.Screen name="PaymentSettings" component={PaymentSettingsScreen} />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
-        <Stack.Screen name="Support" component={SupportScreen} />
-        <Stack.Screen name="Privacy" component={PrivacyScreen} />
-        <Stack.Screen name="ServiceDetail" component={ServiceDetailScreen} />
-        <Stack.Screen
-          name="TechnicianDashboard"
-          component={TechnicianDashboard}
-          options={{
-            headerShown: false,
-          }}
-        />
+          {/* Customer Management */}
+          <Stack.Screen
+            name="CustomerSearch"
+            component={CustomerSearch}
+            options={{
+              headerShown: false,
+            }}
+          />
 
-        {/* Customer Management */}
-        <Stack.Screen
-          name="CustomerSearch"
-          component={CustomerSearch}
-          options={{
-            headerShown: false,
-          }}
-        />
-
-        {/* <Stack.Screen
+          {/* <Stack.Screen
           name="AddCustomer"
           component={AddCustomer}
           options={{
@@ -114,7 +118,7 @@ function AppNavigator() {
             }}
         /> */}
 
-        {/* <Stack.Screen
+          {/* <Stack.Screen
           name="CustomerHistory"
           component={CustomerHistory}
           options={{
@@ -123,17 +127,17 @@ function AppNavigator() {
             }}
             /> */}
 
-        {/* Repair Management */}
-        <Stack.Screen
-          name="NewRepair"
-          component={NewRepair}
-          options={{
-            headerShown: false,
-          }}
-        />
+          {/* Repair Management */}
+          <Stack.Screen
+            name="NewRepair"
+            component={NewRepair}
+            options={{
+              headerShown: false,
+            }}
+          />
           {/* <Stack.Screen name="NewRepair" component={NewRepair} /> */}
 
-        {/* <Stack.Screen
+          {/* <Stack.Screen
           name="RepairDetail"
           component={RepairDetail}
           options={{
@@ -142,47 +146,47 @@ function AppNavigator() {
             }}
             /> */}
 
-        {/* <Stack.Screen
+          {/* <Stack.Screen
           name="Jobs"
-          component={Jobs}
+          component={JobsScreen}
           options={{
             title: "All Jobs",
             headerShown: true,
             }}
             /> */}
 
-        {/* Device Configuration */}
-        <Stack.Screen
-          name="DeviceTypeManager"
-          component={DeviceTypeManager}
-          options={{
-            title: "Device Configuration",
-            headerShown: true,
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => {
-                  // You can add a help or info button here
-                  console.log("Help pressed");
-                }}
-                style={{ marginRight: 16 }}
-              >
-                <Ionicons name="help-circle-outline" size={24} color="#fff" />
-              </TouchableOpacity>
-            ),
-          }}
+          {/* Device Configuration */}
+          <Stack.Screen
+            name="DeviceTypeManager"
+            component={DeviceTypeManager}
+            options={{
+              title: "Device Configuration",
+              headerShown: true,
+              headerRight: () => (
+                <TouchableOpacity
+                  onPress={() => {
+                    // You can add a help or info button here
+                    console.log("Help pressed");
+                  }}
+                  style={{ marginRight: 16 }}
+                >
+                  <Ionicons name="help-circle-outline" size={24} color="#fff" />
+                </TouchableOpacity>
+              ),
+            }}
           />
 
-        {/* Earnings & Inventory */}
-        <Stack.Screen
-          name="Earnings"
-          component={EarningsScreen}
-          options={{
-            title: "Earnings",
-            headerShown: false,
-          }}
+          {/* Earnings & Inventory */}
+          <Stack.Screen
+            name="Earnings"
+            component={EarningsScreen}
+            options={{
+              title: "Earnings",
+              headerShown: false,
+            }}
           />
 
-        {/* <Stack.Screen
+          {/* <Stack.Screen
           name="Inventory"
           component={Inventory}
           options={{
@@ -191,8 +195,8 @@ function AppNavigator() {
             }}
         /> */}
 
-        {/* Profile */}
-        {/* <Stack.Screen
+          {/* Profile */}
+          {/* <Stack.Screen
           name="Profile"
           component={Profile}
           options={{
@@ -200,27 +204,38 @@ function AppNavigator() {
             headerShown: true,
           }}
         /> */}
-        <Stack.Screen name="Customers" component={CustomersScreen} />
-      {/* <Stack.Screen name="CustomerDetail" component={CustomerDetailScreen} />
-      <Stack.Screen name="AddCustomer" component={AddCustomerScreen} />
+          <Stack.Screen name="Customers" component={CustomersScreen} />
+          <Stack.Screen
+            name="CustomerDetail"
+            component={CustomerDetailScreen}
+          />
+          {/* <Stack.Screen name="AddCustomer" component={AddCustomerScreen} />
       <Stack.Screen name="CustomerSearch" component={CustomerSearchScreen} /> */}
-      <Stack.Screen name="Repairs" component={RepairsScreen} />
-      <Stack.Screen name="RepairDetail" component={RepairDetailScreen} />
-      {/* <Stack.Screen name="NewRepair" component={NewRepairScreen} /> */}
-      {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
-      {/* <Stack.Screen name="Earnings" component={EarningsScreen} /> */}
-      </Stack.Navigator>
-    </RepairProvider>
+          <Stack.Screen name="Repairs" component={RepairsScreen} />
+          <Stack.Screen name="RepairDetail" component={RepairDetailScreen} />
+          {/* <Stack.Screen name="NewRepair" component={NewRepairScreen} /> */}
+          {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
+          {/* <Stack.Screen name="Earnings" component={EarningsScreen} /> */}
+        </Stack.Navigator>
+      </RepairProvider>
     );
   }
 
   return (
-    <Stack.Navigator
-      screenOptions={screenOptions}
-      initialRouteName={isRegistered ? "Login" : "Register"}
-      >
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Navigator screenOptions={screenOptions}>
+      {isRegistered ? (
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
@@ -228,9 +243,9 @@ function AppNavigator() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...(Platform.OS === 'web' && {
-      height: '100vh' as any,
-      minHeight: '100vh' as any,
+    ...(Platform.OS === "web" && {
+      height: "100vh" as any,
+      minHeight: "100vh" as any,
     }),
   },
 });

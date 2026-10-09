@@ -4,8 +4,9 @@
     "slug": "technician-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/img2_main_icon_square.png",
     "userInterfaceStyle": "light",
+    "scheme": "fixmate",
     "ios": {
       "supportsTablet": true,
       "config": {
@@ -20,23 +21,35 @@
       },
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/img1_foreground.png",
+        "backgroundImage": "./assets/img1_background.png",
+        "monochromeImage": "./assets/img2_monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.babakhalilmsteam.technicianapp"
+      "package": "com.babakhalilmsteam.technicianapp",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "https://landing-website-orpin.vercel.app/",
+              "pathPrefix": "/technician-login"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/img2_main_icon_square.png",
       "config": {
         "googleMapsApiKey": "YOUR_WEB_GOOGLE_MAPS_API_KEY"
       },
       "build": {
         "babel": {
-          "include": [
-            "@react-navigation"
-          ]
+          "include": ["@react-navigation"]
         }
       }
     },
@@ -48,6 +61,17 @@
         "projectId": "4b6531e5-d28e-4af8-858d-2e03d8212dbd"
       }
     },
-    "owner": "babakhalilms-team"
+    "owner": "babakhalilms-team",
+
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "fixmate_technician",
+          "organization": "babakhalilms-team"
+        }
+      ]
+    ]
   }
 }

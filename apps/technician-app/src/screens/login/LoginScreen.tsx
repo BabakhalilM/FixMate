@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import ScreenWrapper from "@/components/ScreenWrapper";
 
 export default function LoginScreen() {
@@ -63,125 +63,124 @@ export default function LoginScreen() {
 
   return (
     <ScreenWrapper scrollable={true}>
-    <KeyboardAvoidingView
-      // style={styles.container}
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-    
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <View style={styles.logo}>
-                <Text style={styles.logoText}>F</Text>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <View style={styles.logoContainer}>
+                <View style={styles.logo}>
+                  <Text style={styles.logoText}>F</Text>
+                </View>
               </View>
-            </View>
-            <Text style={styles.title}>Welcome Back!</Text>
-            <Text style={styles.subtitle}>
-              Login to your technician account
-            </Text>
-          </View>
-
-          <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="john@example.com"
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  setErrorMessage("");
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                placeholderTextColor="#999"
-              />
+              <Text style={styles.title}>Welcome Back!</Text>
+              <Text style={styles.subtitle}>
+                Login to your technician account
+              </Text>
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Password</Text>
-              <View style={styles.passwordContainer}>
+            <View style={styles.form}>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Email</Text>
                 <TextInput
-                  style={styles.passwordInput}
-                  placeholder="Enter your password"
-                  value={password}
-                  // onChangeText={setPassword}
+                  style={styles.input}
+                  placeholder="john@example.com"
+                  value={email}
                   onChangeText={(text) => {
-                    setPassword(text);
+                    setEmail(text);
                     setErrorMessage("");
                   }}
-                  secureTextEntry={!showPassword}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                   placeholderTextColor="#999"
                 />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChangeText={(text) => {
+                      setPassword(text);
+                      setErrorMessage("");
+                    }}
+                    secureTextEntry={!showPassword}
+                    placeholderTextColor="#999"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeButton}
+                  >
+                    <Text>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.optionsContainer}>
+                <View style={styles.rememberContainer}>
+                  <Switch
+                    value={rememberMe}
+                    onValueChange={setRememberMe}
+                    trackColor={{ false: "#767577", true: "#4F46E5" }}
+                    thumbColor={rememberMe ? "#fff" : "#f4f3f4"}
+                  />
+                  <Text style={styles.rememberText}>Remember me</Text>
+                </View>
                 <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeButton}
+                  onPress={() => navigation.navigate("ForgotPassword" as never)}
                 >
-                  <Text>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
+                  <Text style={styles.forgotText}>Forgot Password?</Text>
+                </TouchableOpacity>
+              </View>
+
+              {errorMessage && (
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              )}
+
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={handleLogin}
+                disabled={loading || authLoading}
+              >
+                {loading || authLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.loginButtonText}>Login</Text>
+                )}
+              </TouchableOpacity>
+
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>OR</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <TouchableOpacity style={styles.biometricButton}>
+                <Text style={styles.biometricText}>🔐 Login with PIN</Text>
+              </TouchableOpacity>
+
+              <View style={styles.registerContainer}>
+                <Text style={styles.registerText}>Don't have an account? </Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Register" as never)}
+                >
+                  <Text style={styles.registerLink}>Register</Text>
                 </TouchableOpacity>
               </View>
             </View>
-
-            <View style={styles.optionsContainer}>
-              <View style={styles.rememberContainer}>
-                <Switch
-                  value={rememberMe}
-                  onValueChange={setRememberMe}
-                  trackColor={{ false: "#767577", true: "#4F46E5" }}
-                  thumbColor={rememberMe ? "#fff" : "#f4f3f4"}
-                />
-                <Text style={styles.rememberText}>Remember me</Text>
-              </View>
-              <TouchableOpacity>
-                <Text style={styles.forgotText}>Forgot Password?</Text>
-              </TouchableOpacity>
-            </View>
-
-            {errorMessage && (
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            )}
-
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={handleLogin}
-              disabled={loading || authLoading}
-            >
-              {loading || authLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.loginButtonText}>Login</Text>
-              )}
-            </TouchableOpacity>
-
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>OR</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            <TouchableOpacity style={styles.biometricButton}>
-              <Text style={styles.biometricText}>🔐 Login with PIN</Text>
-            </TouchableOpacity>
-
-            <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Register" as never)}
-              >
-                <Text style={styles.registerLink}>Register</Text>
-              </TouchableOpacity>
-            </View>
           </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
-                </ScreenWrapper>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ScreenWrapper>
   );
 }
 
@@ -279,7 +278,11 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   forgotText: {
+    fontSize: 13,
     color: "#4F46E5",
+    fontWeight: "600",
+    textAlign: "right",
+    marginTop: 8,
   },
   loginButton: {
     backgroundColor: "#4F46E5",
